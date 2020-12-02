@@ -24,13 +24,16 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
+
 let mainWindow;
 let tray = null;
 async function createWindow() {
   // Create the browser mainWindow.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    frame:false,
+    resizable:true,
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -51,6 +54,14 @@ async function createWindow() {
     mainWindow.loadURL('app://./index.html')
     autoUpdater.checkForUpdatesAndNotify()
   }
+}
+
+function clear_user(){
+  console.log("clear_user()");
+  store.set('token.user',null)
+  store.set('token.token_type',null);
+  store.set('token.access_token', null);
+  delete axios.defaults.headers.common["Authorization"];
 }
 
 // Quit when all windows are closed.
@@ -128,17 +139,6 @@ if (isDevelopment) {
     })
   }
 }
-
-function clear_user(){
-  console.log("clear_user()");
-  store.set('token.user',null)
-  store.set('token.token_type',null);
-  store.set('token.access_token', null);
-  delete axios.defaults.headers.common["Authorization"];
-}
-
-
-
 
 ipcMain.handle('getStoreValue', (event, key) => {
   console.log('getStoreValue:',key)
